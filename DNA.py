@@ -9,8 +9,6 @@ class DNA :
 
 		for i in range(0, 18):
 			self.genes.append(random.choice(string.ascii_letters + " "))
-			print(self.genes[i], end="")
-		print("")
 
 
 	def fitness(self):
@@ -19,11 +17,9 @@ class DNA :
 			if(self.genes[i] == Setup().target[i]):
 				score += 1
 		self.fitnessScore = score/len(Setup().target)
-		print(self.fitnessScore)
-		print(round(random.uniform(0,1), 2))
 
 	#crossover between child and parent DNA
-	def mate(parent):
+	def mate(self, parent):
 		child = DNA()
 		midpoint = random.randint(0, len(self.genes)-1)
 		for i in range(0, len(self.genes)):
@@ -33,26 +29,38 @@ class DNA :
 				child.genes[i] = parent.genes[i]
 		return child
 
-	def mutate():
+	def mutate(self):
 		for i in range(0, len(self.genes)):
 			if(round(random.uniform(0,1), 2) < Setup().mutationRate):
 				self.genes[i] = random.choice(string.ascii_letters + " ")
+
+	def checkString(self):
+		phrase = ""
+		for i in self.genes:
+			phrase += i
+		return phrase
 
 class Setup:
 
 	def __init__(self):
 		self.mutationRate = 0.01
-		self.totalPopulation = 150
+		self.totalPopulation = 200
 		self.population = []
 		self.matingPool = []
 		self.target = "to be or not to be"
-
-	def create(self):
-		for i in range(0, len(self.population)):
-			self.population[i].fitness
+		self.targetHit = ""
+		self.complete = False
 
 		for i in range(0, self.totalPopulation):
 			self.population.append(DNA())
+
+	def create(self):
+		for i in range(0, len(self.population)):
+			self.population[i].fitness()
+			self.targetHit = self.population[i].checkString()
+			print(self.targetHit)
+			self.isCompleted(self.targetHit)
+			#print(self.population[i].fitnessScore)
 
 		for i in range(0, self.totalPopulation):
 			n = int(self.population[i].fitnessScore * 100)
@@ -65,8 +73,9 @@ class Setup:
 			matingPoolLength = len(self.matingPool)
 
 			if(matingPoolLength > 0):
-				a, b = random.randint(0, matingPoolLength - 1)
-			
+				a = random.randint(0, matingPoolLength - 1)
+				b = random.randint(0, matingPoolLength - 1)
+
 				partnerA = self.matingPool[a]
 				partnerB = self.matingPool[b]
 				
@@ -75,8 +84,13 @@ class Setup:
 
 				self.population[i] = child
 
+	def isCompleted(self, phrase):
+		if(phrase == self.target):
+			self.complete = True
+
+
 
 
 d = Setup()
-while(True):
+while(d.complete == False):
 	d.create()
