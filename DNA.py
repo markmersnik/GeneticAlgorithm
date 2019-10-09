@@ -3,9 +3,7 @@ import string
 
 class DNA :
 
-
 	def __init__(self):
-
 		self.genes = []
 		self.fitnessScore = 0.0
 
@@ -22,6 +20,7 @@ class DNA :
 				score += 1
 		self.fitnessScore = score/len(Setup().target)
 		print(self.fitnessScore)
+		print(round(random.uniform(0,1), 2))
 
 	#crossover between child and parent DNA
 	def mate(parent):
@@ -34,12 +33,10 @@ class DNA :
 				child.genes[i] = parent.genes[i]
 		return child
 
-	#def mutate(mutationRate):
-
-
-	def currentPopulation(self):
-		for i in self.genes:
-			print(i)
+	def mutate():
+		for i in range(0, len(self.genes)):
+			if(round(random.uniform(0,1), 2) < Setup().mutationRate):
+				self.genes[i] = random.choice(string.ascii_letters + " ")
 
 class Setup:
 
@@ -50,11 +47,36 @@ class Setup:
 		self.matingPool = []
 		self.target = "to be or not to be"
 
+	def create(self):
+		for i in range(0, len(self.population)):
+			self.population[i].fitness
+
 		for i in range(0, self.totalPopulation):
 			self.population.append(DNA())
 
+		for i in range(0, self.totalPopulation):
+			n = int(self.population[i].fitnessScore * 100)
 
-	#def create():
+			for j in range(0, n):
+				self.matingPool.append(self.population[i])
 
-d = DNA()
-d.fitness()
+		#Reproduction
+		for i in range(0, len(self.population)):
+			matingPoolLength = len(self.matingPool)
+
+			if(matingPoolLength > 0):
+				a, b = random.randint(0, matingPoolLength - 1)
+			
+				partnerA = self.matingPool[a]
+				partnerB = self.matingPool[b]
+				
+				child = partnerA.mate(partnerB)
+				child.mutate()
+
+				self.population[i] = child
+
+
+
+d = Setup()
+while(True):
+	d.create()
