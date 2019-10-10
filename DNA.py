@@ -2,7 +2,7 @@ import random
 import string 
 
 #Contains all of the functions required for the algorithm
-class DNA :
+class DNA:
 
 	#Constructs our DNA object
 	def __init__(self):
