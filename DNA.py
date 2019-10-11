@@ -1,6 +1,6 @@
 import random
 import string 
-
+import math
 #Contains all of the functions required for the algorithm
 class DNA:
 
@@ -9,7 +9,7 @@ class DNA:
 		self.genes = []
 		self.fitnessScore = 0.0
 
-		for i in range(0, 6):
+		for i in range(0, 7):
 			self.genes.append(random.choice(string.ascii_lowercase + " "))
 
 	#Calculates the fitness based on number of letters that match
@@ -21,6 +21,7 @@ class DNA:
 				score += 1
 
 		self.fitnessScore = score/len(Setup().target)
+		self.fitnessScore = self.fitnessScore**2
 
 	#Produces crossover between child and parent DNA
 	def mate(self, parent):
@@ -56,18 +57,19 @@ class Setup:
 		self.totalPopulation 	= 100
 		self.population 		= []
 		self.matingPool 		= []
-		self.target 			= "carrot"
+		self.target 			= "carrots"
 		self.targetLength 		= len(self.target)
 		self.targetHit 			= ""
 		self.complete 			= False
 		self.generations 		= 0
+		self.numIterated		= self.totalPopulation
 
 		for i in range(0, self.totalPopulation):
 			self.population.append(DNA())
 
 	#Calculates the average fitness of the current population
 	def averagefit(self, num):
-		return num/self.totalPopulation
+		return int(num/self.numIterated)
 
 	#Performs the evolution of our problem
 	def create(self):
@@ -83,17 +85,19 @@ class Setup:
 			self.population[i].fitness()
 			print(self.population[i].checkString() + " --> ", end="")
 
+		#Mating pool algorithm
 		for i in range(0, self.totalPopulation):
-			phrase = self.population[i].checkString()
 			n = int(self.population[i].fitnessScore * 100)
+			current_phrase = self.population[i].checkString()
 
 			if(n > topFitness):
 				topFitness = n
 				topPhrase = self.population[i].checkString()
-			avgFitness += n
+			avgFitness += int(((n/100)**.5)*100)
 
-			if(n == 100):
+			if(current_phrase == self.target):
 				self.complete = True
+				self.numIterated = i
 				break
 
 			for j in range(0, n):
@@ -101,6 +105,9 @@ class Setup:
 
 		#Reproduction process
 		for i in range(0, len(self.population)):
+			if(self.complete):
+				break
+
 			matingPoolLength = len(self.matingPool)
 			if(matingPoolLength > 0):
 				a = random.randint(0, matingPoolLength - 1)
@@ -115,7 +122,7 @@ class Setup:
 
 		print("\n\nGeneration " + str(self.generations))
 		print("Best Phrase: " + topPhrase)
-		print("Avg Fitness " + str(self.averagefit(avgFitness)) + "\n")
+		print("Avg Fitness " + str(self.averagefit(avgFitness)) + "\n\n")
 
 
 
